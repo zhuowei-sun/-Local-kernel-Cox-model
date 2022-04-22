@@ -19,6 +19,7 @@ kerfun <- function(xx){
   pmax((1-xx^2)*0.75,0)
 }
 
+lqrule64 <- legendre.quadrature.rules(64)[[64]]
 
 ##################generate data############################
 meanfunction<-function(t){-1-2*(t-0.5)^2}
@@ -347,7 +348,7 @@ mean((estres_all_h  %>%
       simplify = F
     ) %>% bind_rows(.id = "id")
   
-  hcv(simdata,nn)
+  hh=hcv(simdata,nn)
   
   
   temp <- estproc_Cox(data=simdata,n=nn,s,h1=nn^(-0.35),h2=hh)
@@ -383,7 +384,7 @@ mean((estres_all_h  %>%
 
 
 
-###############################plot###################################
+############################### finding the threshold ###################################
 nn=400
 from=nn^(-0.35)
 to=1-nn^(-0.35)
@@ -437,25 +438,7 @@ for(i in 1:1000){
 c_alpha=
   tibble(ss=apply(cc,1,max)) %>% mutate(id=id) %>% group_by(id)  %>%  summarise(q=quantile(ss,0.95)) 
 meanq=mean(c_alpha$q)
-est=res %>%
-  lapply(function(xx) tibble(est=xx[[1]]$est,sigma=xx[[1]]$sigma ,scb=xx[[1]]$sigma*meanq)) %>% 
-  bind_rows(.id="rep")  
-tt=points 
-dat_plot <- data.frame(tt, plotb=c(est$est),cl=c(est$est-est$sigma*1.96),cu=c(est$est+est$sigma*1.96),
-                       scbl=c(est$est-est$scb),scbu=c(est$est+est$scb))
-
-a=dat_plot 
-plot(a$tt,a$plotb,xlab="time",ylab="",type="l",ylim=c(-3.5,2.5),lwd=2,cex.axis=1.5,cex.lab=1.5,
-     cex.main=1.5)
-lines(a$tt,sin(2*pi*a$tt),type="l",col="red",lwd=2)
-lines(a$tt,a$cl,type="l",col="blue3",lty=2,lwd=2)
-lines(a$tt,a$cu,type="l",col="blue3",lty=2,lwd=2)
-lines(a$tt,a$scbl,type="l",col="darkgreen",lty=2,lwd=2)
-lines(a$tt,a$scbu,type="l",col="darkgreen",lty=2,lwd=2)
-legend(0,-2.3,expression("EST","TRUE","95%CI","95%SCB"),col=c("black","red","blue3","darkgreen")
-       ,lty=c(1,1,2,2),bty="n",lwd=2,cex=1.2)
  
-
 
 ##################################[ scb cp ]############################################################################
 
