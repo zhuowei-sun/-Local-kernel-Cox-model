@@ -332,7 +332,7 @@ mean((estres_all_h  %>%
 
 ################################auto###########################################
  estres_all_h <- foreach(ii = 1:1000,.packages = c("tidyverse","extraDistr","MASS","nleqslv","nloptr","splines","gaussquad","foreach")) %dopar% {
-  set.seed(ii)
+  
   print(ii)
   
   simdata <-
@@ -444,7 +444,7 @@ meanq=mean(c_alpha$q)
 
 res=foreach(s=points) %do%{
   estres_all_h <- foreach(ii = 1:1000,.packages = c("tidyverse","extraDistr","MASS","nleqslv","nloptr","splines","gaussquad","foreach")) %dopar% {
-    set.seed(ii)
+    
     print(ii)
     
     simdata <-
